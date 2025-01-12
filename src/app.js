@@ -10,9 +10,12 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.json());
 
-app.use(express.static('pages'));  
-// app.use(express.static('.')); 
-app.use(express.static(path.join(__dirname)));
+// app.use(express.static('pages'));  
+// // app.use(express.static('.')); 
+// app.use(express.static(path.join(__dirname)));
+// said by chatGPT  // to deply
+app.use(express.static(path.join(__dirname, 'pages')));
+
 
 app.get('/', (req, res)=>{
     // if(login)
