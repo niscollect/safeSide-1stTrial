@@ -1,0 +1,138 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+
+    <style>
+        #map {
+            width: 75vh;
+            height: 70vh;
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map">
+
+    </div>
+
+
+
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+
+    <script type="module">
+        import { getLat, getLong, getLastUpdate } from "./back.js";
+
+
+        const lat = getLat();
+        const long = getLong();
+        
+        const lastUpdate = getLastUpdate();
+
+        console.log(lat, "->", long);
+
+        var map = L.map('map', {
+            center: [lat, long],
+            zoom: 33
+        });
+
+        var osm= L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        osm.addTo(map);
+
+        L.marker([lat, long]).addTo(map)
+            .bindPopup('A pretty CSS popup.<br> Easily customizable.')
+            .openPopup();
+
+        var circle = L.circle([lat, long], {radius: 2})
+        //real time location finder
+        
+
+    </script>
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- leaflet css -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <style>
+        #map {
+            width: 75vh;
+            height: 70vh;
+            background-color: red;
+        }
+        #lastUpdate {
+            margin: 10px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="lastUpdate"></div>
+    <div id="map"></div>
+
+    <!-- leaflet js -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- <script type="module" src="../services/mapLocation.js"></script> -->
+    <script type="module">
+        import { getLat, getLong } from "../services/mapLocation.js";
+
+        let map; 
+        let marker;
+        let circle;
+        let lastUpdateElement;
+
+        // Initialize with stored coordinates
+        const initialLat = await getLat();
+        const initialLong = await getLong();
+        console.log("in the map-> lat =", initialLat, "and long =", initialLong)
+        // Set up the map
+        map = L.map('map', {
+            center: [initialLat, initialLong],
+            zoom: 33
+        });
+
+        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        osm.addTo(map);
+
+        // Initialize marker and circle
+        marker = L.marker([initialLat, initialLong]).addTo(map)
+            .bindPopup('Your current location')
+            .openPopup();
+
+        circle = L.circle([initialLat, initialLong], {
+            radius: 2
+        }).addTo(map);
+
+        
+    </script>
+</body>
+</html>

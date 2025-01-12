@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- leaflet css -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+
+</head>
+<body>
+
+    <br><br>
+
+    Name: <input type="text" name="volName" id="volName">                       <br><br>   
+    Phone No.: <input type="number" name="volNo" id="volNo">                    <br><br>  
+    Email: <input type="email" name="volMail" id="volMail">                     <br><br>
+    DOB: <input type="date" name="volDob" id="volDob">                          <br><br>     
+    Complete Address: <!-- <input type="text" name="volAdd" id="volAdd"> --> <button id="getLocation">Take My location</button>             <br><br>
+    
+    <!-- Currently we are roughly assuming that the volunteer's current address is the FFA -->
+    <!-- We aim to accept the location(FFA) using map, so that we can automatically get the latitude and longitude -->
+    <br><br>
+
+    <button type="submit" id="registerVol">REGISTER</button>
+
+    <!-- leaflet js -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script type="module" src="../services/location.js"></script>
+    
+    <script type="module">
+        // save the user's data to the firebase realtime database
+        // fetch user's current location(which we'll automate smart, by integrating FFA selection by user, on a map itself)
+        // save the address as the FFA along with other details
+        // create a key named "Emergency" with value "null"/"false"  
+        //                |->   Later on when we'll have to notify for emergency-near-by, we'll just convert that null to True. And we'll be having a box on the home.html that will access to this Emergency key, and will be displaying for emergency and location when it turns true
+
+
+    //s1:- save user's data to the firebase realtime database, s2:- fetch user's FFA
+      
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+        import {getLat, getLong} from "../services/location.js";
+        const LAT=getLat();
+        const LONG=getLong();
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBMaSahaGoPlBfle1j9NcmduytyuVMQk4E",
+          authDomain: "safeside-pre.firebaseapp.com",
+          databaseURL: "https://safeside-pre-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "safeside-pre",
+          storageBucket: "safeside-pre.firebasestorage.app",
+          messagingSenderId: "674744021415",
+          appId: "1:674744021415:web:5e77ba1887c4a826be0682"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        const db = getDatabase();
+
+
+
+
+        async function addVol(volName, volNo, volMail, volDob, lat, long){  //we'll firgure out on the go, whether we want the emergency key-value thru the function parameter or some other way.
+           
+            
+            // Replace invalid characters (only replace '.' in this case)
+            var safeLat = lat.toString().replace(/\./g, '_');
+            var safeLong = long.toString().replace(/\./g, '_');
+            
+
+            const reference = ref(db, "vol/"+ ` ${safeLat}-${safeLong}-${volName.replace(/\s+/g, '') }`); //if it'll be an issue saving lat/long like this, we'll try saving with Name for MVP
+
+            await set(reference, {
+                "volName": volName,
+                "volNo":volNo,
+                "volMail": volMail,
+                "volDob": volDob,
+                "lat": lat,
+                "long": long,
+            });
+        }
+
+        document.getElementById("registerVol").addEventListener("click", ()=>{
+            const name = document.getElementById('volName').value;
+            const phoneNo = document.getElementById('volNo').value;
+            const email = document.getElementById('volMail').value;
+            const dob = document.getElementById('volDob').value;
+           
+            // console.log(dob);
+            // console.log(name);
+            // console.log(phoneNo);
+            // console.log(email);
+            // console.log(LAT, "->", LONG);
+
+            addVol(name, phoneNo, email, dob, LAT, LONG);
+
+        });
+
+    </script>
+
+</body>
+</html>
