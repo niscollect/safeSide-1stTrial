@@ -37,6 +37,13 @@ app.get('/login.html', (req, res)=>{
 app.get('/register.js', (req, res)=>{
     res.sendFile(path.join(__dirname, 'register.js'));
 });
+
+/////////////
+app.get('/login.js', (req, res)=>{
+    res.sendFile(path.join(__dirname, 'login.js'));
+});
+////////////
+
 app.get('/mapLocation.html', (req, res)=>{
     res.sendFile(path.join(__dirname, 'pages', 'mapLocation.html'));
 }); 
